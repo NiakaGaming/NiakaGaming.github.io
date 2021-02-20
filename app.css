@@ -1,0 +1,58 @@
+body{
+    margin: 0;
+    padding: 0;
+}
+
+/* TITLE */
+.score{
+  color: blue;  
+}
+
+/* MAIN */
+section{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+#pacman{
+    height: 440px;
+    width: 380px;
+    border: 5px solid black;
+}
+#pacman div div{
+    width: 20px;
+    height: 20px;
+    /* display: flex;
+    flex-wrap: wrap; */
+}
+.row{
+    display: flex;
+}
+
+/* SQUARES */
+.wall{
+    background-color: blue;
+}
+.pac-dot{
+    background-color: green;
+    border: 5px solid white;
+    box-sizing: border-box;
+}
+.pacman{
+    background-color: yellow !important;
+    border-radius: 10px;
+    border: 2px solid black;
+    box-sizing: border-box;
+}
+.phantom{
+    box-sizing: border-box;
+    background-color: red;
+    border: 2px solid black;
+}
+.power-pellet{
+    background-color: green;
+    border: 2px solid black;
+    box-sizing: border-box;
+}
+
