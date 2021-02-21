@@ -13,3 +13,6 @@ https://www.google.com/search?q=pac-man&sxsrf=ALeKk00p2Ku1Wsvb0QCDL38A05UvA-5NCA
 <!-- IA -->
 11. Fantômes "intelligents" (améliorer le déplacement, repérer le Pac-Man, etc.)
 12. Revoir la gestion des collisions avec les fantômes
+
+<!-- ------------------------------------------------------------------------------------------------------------------------------- -->
+1. If wall where u wanna go, remember and when u can, move that way
