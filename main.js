@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
     // 0 = WALL
-    // 1 = PAC DOT
+    // 1 = DOT
     // 2 = PHANTOM
     // 3 = POWER-PELLET
     // 4 = EMPTY
@@ -90,75 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     spawn();
 
-    let i = 0;
-    // Move The PLayer by where he is at
-    function movePlayer(event) {
-        rows[spawnPos].classList.remove("pacman");
-
-        switch (event.which) {
-            case 37:
-                if (spawnPos % width !== 0 && !rows[spawnPos - 1].classList.contains("wall")) {
-                    spawnPos -= 1;
-                }
-                // IF c'est la sortie de gauche
-                if (spawnPos == 190) {
-                    spawnPos = 208
-                }
-                // IF c'est un phantom
-                if (rows[spawnPos].classList.contains("phantom") && power == false) {
-                    alert("YOU ARE DEAD");
-                    resetMap();
-                }
-                i = 0;
-                break;
-            case 38:
-                if (spawnPos - width >= 0 && !rows[spawnPos - width].classList.contains("wall")) {
-                    spawnPos -= width;
-                }
-                // IF c'est un phantom
-                if (rows[spawnPos].classList.contains("phantom") && power == false) {
-                    alert("YOU ARE DEAD");
-                    resetMap();
-                }
-                i = 1;
-                break;
-            case 39:
-                if (spawnPos % width < width - 1 && !rows[spawnPos + 1].classList.contains("wall")) {
-                    spawnPos += 1;
-                }
-                // IF c'est la sortie de droite
-                if (spawnPos == 208) {
-                    spawnPos = 190
-                }
-                // IF c'est un phantom
-                if (rows[spawnPos].classList.contains("phantom") && power == false) {
-                    alert("YOU ARE DEAD");
-                    resetMap();
-                }
-                i = 2;
-                break;
-            case 40:
-                if (spawnPos + width < width * (width + 3) && !rows[spawnPos + width].classList.contains("wall")) {
-                    spawnPos += width;
-                }
-                // IF c'est un phantom
-                if (rows[spawnPos].classList.contains("phantom") && power == false) {
-                    alert("YOU ARE DEAD");
-                    resetMap();
-                }
-                i = 3;
-                break;
-        }
-
-        dotEaten();
-        powerEaten();
-        phantomsEaten();
-        phantomsScared();
-        win();
-        rows[spawnPos].classList.add("pacman");
-    }
-    // document.addEventListener("keyup", movePlayer);
-    document.addEventListener("keyup", moveAlone);
+    document.addEventListener("keyup", controls);
 
     let directionDOWN = [+width, spawnPos + width < width * (width + 3)];
     let directionLEFT = [-1, spawnPos % width !== 0];
@@ -167,21 +99,20 @@ document.addEventListener("DOMContentLoaded", () => {
     let direction = directionLEFT;
 
     // MOVE UNTIL THERE'S A WALL
-    let timerMove;
-    function moveAlone(event) {
+    let timerMove = setInterval(movePlayer, 250);
+    let previousDir;
 
-        if (timerMove) {
-            stopMove();
-        }
-        timerMove = setInterval(move, 500);
-
-        function move() {
-            rows[spawnPos].classList.remove("pacman");
-
+    function controls(event) {
+        if (event != undefined) {
             switch (event.which) {
                 case 37:
                     if (directionLEFT[1] && !rows[spawnPos + directionLEFT[0]].classList.contains("wall")) {
+                        previousDir = direction;
                         direction = directionLEFT;
+                        if (direction != previousDir) {
+                            clearInterval(timerMove);
+                            timerMove = setInterval(movePlayer, 250);
+                        }
                     }
                     // // IF c'est la sortie de gauche
                     // if (spawnPos == 190) {
@@ -195,7 +126,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     break;
                 case 38:
                     if (directionUP[1] && !rows[spawnPos + directionUP[0]].classList.contains("wall")) {
+                        previousDir = direction;
                         direction = directionUP;
+                        if (direction != previousDir) {
+                            clearInterval(timerMove);
+                            timerMove = setInterval(movePlayer, 250);
+                        }
                     }
                     // // IF c'est un phantom
                     // if (rows[spawnPos].classList.contains("phantom") && power == false) {
@@ -205,7 +141,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     break;
                 case 39:
                     if (directionRIGHT[1] && !rows[spawnPos + directionRIGHT[0]].classList.contains("wall")) {
+                        previousDir = direction;
                         direction = directionRIGHT;
+                        if (direction != previousDir) {
+                            clearInterval(timerMove);
+                            timerMove = setInterval(movePlayer, 250);
+                        }
                     }
                     //     // IF c'est la sortie de droite
                     //     if (spawnPos == 208) {
@@ -219,7 +160,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     break;
                 case 40:
                     if (directionDOWN[1] && !rows[spawnPos + directionDOWN[0]].classList.contains("wall")) {
+                        previousDir = direction;
                         direction = directionDOWN;
+                        if (direction != previousDir) {
+                            clearInterval(timerMove);
+                            timerMove = setInterval(movePlayer, 250);
+                        }
                     }
                     //     // IF c'est un phantom
                     //     if (rows[spawnPos].classList.contains("phantom") && power == false) {
@@ -228,31 +174,30 @@ document.addEventListener("DOMContentLoaded", () => {
                     //     }
                     break;
             }
+        }
+    }
 
-            if (direction[1] && !rows[spawnPos + direction[0]].classList.contains("wall")) {
-                spawnPos += direction[0];
-            }
-            if (rows[spawnPos + direction[0]].classList.contains("wall")) {
-                stopMove();
-            }
+    function movePlayer() {
+        rows[spawnPos].classList.remove("pacman");
 
-            // if (direction != directionSec) {
-            //     clearInterval(timerMove);
-            // }
-
-            dotEaten();
-            powerEaten();
-            phantomsEaten();
-            phantomsScared();
-            win();
-
-            rows[spawnPos].classList.add("pacman");
+        if (direction[1] && !rows[spawnPos + direction[0]].classList.contains("wall")) {
+            spawnPos += direction[0];
+        }
+        if (rows[spawnPos + direction[0]].classList.contains("wall")) {
+            stopMove();
         }
 
+        dotEaten();
+        powerEaten();
+        phantomsEaten();
+        phantomsScared();
+        win();
 
-        function stopMove() {
-            clearInterval(timerMove);
-        }
+        rows[spawnPos].classList.add("pacman");
+    }
+
+    function stopMove() {
+        clearInterval(timerMove);
     }
 
     // Score by dot eaten
@@ -338,3 +283,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // https://www.youtube.com/watch?v=9TcU2C1AACw
 
+
+// ----------------------------------------------------------------------------------------
+// https://github.com/weibenfalk/vanilla-js-pacman/tree/master/js-pacman-FINISHED
+// https://www.youtube.com/watch?v=YBtzzVwrTeE&ab_channel=TraversyMedia
+// ----------------------------------------------------------------------------------------
