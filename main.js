@@ -101,6 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // MOVE UNTIL THERE'S A WALL
     let timerMove = setInterval(movePlayer, 250);
     let previousDir;
+    let dirTemp = direction;
 
     function controls(event) {
         if (event != undefined) {
@@ -113,6 +114,11 @@ document.addEventListener("DOMContentLoaded", () => {
                             clearInterval(timerMove);
                             timerMove = setInterval(movePlayer, 250);
                         }
+                    }
+                    else {
+                        dirTemp = directionLEFT;
+                        clearInterval(timerMove);
+                        timerMove = setInterval(movePlayer, 250);
                     }
                     // // IF c'est la sortie de gauche
                     // if (spawnPos == 190) {
@@ -133,6 +139,11 @@ document.addEventListener("DOMContentLoaded", () => {
                             timerMove = setInterval(movePlayer, 250);
                         }
                     }
+                    else {
+                        dirTemp = directionUP;
+                        clearInterval(timerMove);
+                        timerMove = setInterval(movePlayer, 250);
+                    }
                     // // IF c'est un phantom
                     // if (rows[spawnPos].classList.contains("phantom") && power == false) {
                     //     alert("YOU ARE DEAD");
@@ -147,6 +158,11 @@ document.addEventListener("DOMContentLoaded", () => {
                             clearInterval(timerMove);
                             timerMove = setInterval(movePlayer, 250);
                         }
+                    }
+                    else {
+                        dirTemp = directionRIGHT;
+                        clearInterval(timerMove);
+                        timerMove = setInterval(movePlayer, 250);
                     }
                     //     // IF c'est la sortie de droite
                     //     if (spawnPos == 208) {
@@ -167,6 +183,11 @@ document.addEventListener("DOMContentLoaded", () => {
                             timerMove = setInterval(movePlayer, 250);
                         }
                     }
+                    else {
+                        dirTemp = directionDOWN;
+                        clearInterval(timerMove);
+                        timerMove = setInterval(movePlayer, 250);
+                    }
                     //     // IF c'est un phantom
                     //     if (rows[spawnPos].classList.contains("phantom") && power == false) {
                     //         alert("YOU ARE DEAD");
@@ -180,9 +201,31 @@ document.addEventListener("DOMContentLoaded", () => {
     function movePlayer() {
         rows[spawnPos].classList.remove("pacman");
 
-        if (direction[1] && !rows[spawnPos + direction[0]].classList.contains("wall")) {
-            spawnPos += direction[0];
+        if (dirTemp[1] && !rows[spawnPos + dirTemp[0]].classList.contains("wall") && direction != dirTemp) {
+            spawnPos += dirTemp[0];
+            clearInterval(timerMove);
+            timerMove = setInterval(movePlayer, 250);
+
+            // log
+            console.log("temp");
         }
+        else if (direction[1] && !rows[spawnPos + direction[0]].classList.contains("wall")) {
+            spawnPos += direction[0];
+            clearInterval(timerMove);
+            timerMove = setInterval(movePlayer, 250);
+
+            // log
+            console.log("dir");
+        }
+        else {
+            spawnPos += direction[0];
+            clearInterval(timerMove);
+            timerMove = setInterval(movePlayer, 250);
+
+            // log
+            console.log("temp - dir");
+        }
+
         if (rows[spawnPos + direction[0]].classList.contains("wall")) {
             stopMove();
         }
