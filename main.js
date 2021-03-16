@@ -111,14 +111,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         previousDir = direction;
                         direction = directionLEFT;
                         if (direction != previousDir) {
+                            dirTemp = direction;
                             clearInterval(timerMove);
                             timerMove = setInterval(movePlayer, 250);
                         }
                     }
                     else {
                         dirTemp = directionLEFT;
-                        clearInterval(timerMove);
-                        timerMove = setInterval(movePlayer, 250);
                     }
                     // // IF c'est la sortie de gauche
                     // if (spawnPos == 190) {
@@ -135,14 +134,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         previousDir = direction;
                         direction = directionUP;
                         if (direction != previousDir) {
+                            dirTemp = direction;
                             clearInterval(timerMove);
                             timerMove = setInterval(movePlayer, 250);
                         }
                     }
                     else {
                         dirTemp = directionUP;
-                        clearInterval(timerMove);
-                        timerMove = setInterval(movePlayer, 250);
                     }
                     // // IF c'est un phantom
                     // if (rows[spawnPos].classList.contains("phantom") && power == false) {
@@ -155,14 +153,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         previousDir = direction;
                         direction = directionRIGHT;
                         if (direction != previousDir) {
+                            dirTemp = direction;
                             clearInterval(timerMove);
                             timerMove = setInterval(movePlayer, 250);
                         }
                     }
                     else {
                         dirTemp = directionRIGHT;
-                        clearInterval(timerMove);
-                        timerMove = setInterval(movePlayer, 250);
                     }
                     //     // IF c'est la sortie de droite
                     //     if (spawnPos == 208) {
@@ -179,14 +176,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         previousDir = direction;
                         direction = directionDOWN;
                         if (direction != previousDir) {
+                            dirTemp = direction;
                             clearInterval(timerMove);
                             timerMove = setInterval(movePlayer, 250);
                         }
                     }
                     else {
                         dirTemp = directionDOWN;
-                        clearInterval(timerMove);
-                        timerMove = setInterval(movePlayer, 250);
                     }
                     //     // IF c'est un phantom
                     //     if (rows[spawnPos].classList.contains("phantom") && power == false) {
@@ -205,6 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
             spawnPos += dirTemp[0];
             clearInterval(timerMove);
             timerMove = setInterval(movePlayer, 250);
+            direction = dirTemp;
 
             // log
             console.log("temp");
@@ -217,18 +214,6 @@ document.addEventListener("DOMContentLoaded", () => {
             // log
             console.log("dir");
         }
-        else {
-            spawnPos += direction[0];
-            clearInterval(timerMove);
-            timerMove = setInterval(movePlayer, 250);
-
-            // log
-            console.log("temp - dir");
-        }
-
-        if (rows[spawnPos + direction[0]].classList.contains("wall")) {
-            stopMove();
-        }
 
         dotEaten();
         powerEaten();
@@ -237,10 +222,6 @@ document.addEventListener("DOMContentLoaded", () => {
         win();
 
         rows[spawnPos].classList.add("pacman");
-    }
-
-    function stopMove() {
-        clearInterval(timerMove);
     }
 
     // Score by dot eaten
