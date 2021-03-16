@@ -31,13 +31,19 @@ document.addEventListener("DOMContentLoaded", () => {
     ]
     // 0 = WALL
     // 1 = DOT
-    // 2 = PHANTOM
+    // 2 = GHOST
     // 3 = POWER-PELLET
     // 4 = EMPTY
 
     // Create the map
     let rows = [];
     let squares = [];
+    let ghost = [
+        "red",
+        "blue",
+        "orange",
+        "pink",
+    ];
 
     function createMap() {
         for (let i = 0; i < map.length; i++) {
@@ -55,7 +61,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     squares[j].classList.add("pac-dot")
                 }
                 else if (map[i][j] == 2) {
-                    squares[j].classList.add("phantom")
+                    squares[j].classList.add("ghost")
+                    squares[j].classList.add(ghost[0])
+                    ghost.splice(0, 1);
                 }
                 else if (map[i][j] == 3) {
                     squares[j].classList.add("power-pellet")
@@ -119,12 +127,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     else {
                         dirTemp = directionLEFT;
                     }
-                    // // IF c'est la sortie de gauche
-                    // if (spawnPos == 190) {
-                    //     spawnPos = 208
-                    // }
-                    // // IF c'est un phantom
-                    // if (rows[spawnPos].classList.contains("phantom") && power == false) {
+                    // // IF c'est un ghost
+                    // if (rows[spawnPos].classList.contains("ghost") && power == false) {
                     //     alert("YOU ARE DEAD");
                     //     resetMap();
                     // }
@@ -142,8 +146,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     else {
                         dirTemp = directionUP;
                     }
-                    // // IF c'est un phantom
-                    // if (rows[spawnPos].classList.contains("phantom") && power == false) {
+                    // // IF c'est un ghost
+                    // if (rows[spawnPos].classList.contains("ghost") && power == false) {
                     //     alert("YOU ARE DEAD");
                     //     resetMap();
                     // }
@@ -165,8 +169,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     //     if (spawnPos == 208) {
                     //         spawnPos = 190
                     //     }
-                    //     // IF c'est un phantom
-                    //     if (rows[spawnPos].classList.contains("phantom") && power == false) {
+                    //     // IF c'est un ghost
+                    //     if (rows[spawnPos].classList.contains("ghost") && power == false) {
                     //         alert("YOU ARE DEAD");
                     //         resetMap();
                     //     }
@@ -184,8 +188,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     else {
                         dirTemp = directionDOWN;
                     }
-                    //     // IF c'est un phantom
-                    //     if (rows[spawnPos].classList.contains("phantom") && power == false) {
+                    //     // IF c'est un ghost
+                    //     if (rows[spawnPos].classList.contains("ghost") && power == false) {
                     //         alert("YOU ARE DEAD");
                     //         resetMap();
                     //     }
@@ -202,23 +206,21 @@ document.addEventListener("DOMContentLoaded", () => {
             clearInterval(timerMove);
             timerMove = setInterval(movePlayer, 250);
             direction = dirTemp;
-
-            // log
-            console.log("temp");
         }
         else if (direction[1] && !rows[spawnPos + direction[0]].classList.contains("wall")) {
+            // IF c'est la sortie de gauche
+            if (spawnPos == 190) {
+                spawnPos = 208
+            }
             spawnPos += direction[0];
             clearInterval(timerMove);
             timerMove = setInterval(movePlayer, 250);
-
-            // log
-            console.log("dir");
         }
 
         dotEaten();
         powerEaten();
-        phantomsEaten();
-        phantomsScared();
+        ghostEaten();
+        ghostScared();
         win();
 
         rows[spawnPos].classList.add("pacman");
@@ -254,27 +256,25 @@ document.addEventListener("DOMContentLoaded", () => {
         power = false;
     }
 
-    // Phantoms eaten
-    function phantomsEaten() {
-        if (rows[spawnPos].classList.contains("phantom") && power == true) {
+    // ghosts eaten
+    function ghostEaten() {
+        if (rows[spawnPos].classList.contains("ghost") && power == true) {
             score += 15;
             scoreDisplay.innerHTML = "SCORE : " + score;
-            rows[spawnPos].classList.remove("phantom")
+            rows[spawnPos].className = "";
         }
     }
 
-    let phantoms = document.querySelectorAll(".phantom");
-    function phantomsScared() {
+    let ghosts = document.querySelectorAll(".ghost");
+    function ghostScared() {
         if (power == true) {
-            phantoms.forEach(element => {
-                // Add class scared
-                element.style.backgroundColor = "lightblue";
+            ghosts.forEach(element => {
+                element.classList.add("ghostScared")
             });
         }
         else {
-            phantoms.forEach(element => {
-                // Remove class scared
-                element.style.backgroundColor = "red";
+            ghosts.forEach(element => {
+                element.classList.remove("ghostScared")
             });
         }
     }
@@ -299,6 +299,11 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    // AI behavior
+    function moveAI() {
+    }
+    let timerMoveAI = setInterval(moveAI, 250);
 })
 
 // https://www.youtube.com/watch?v=CeUGlSl2i4Q

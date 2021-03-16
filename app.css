@@ -39,20 +39,35 @@ section{
     border: 5px solid white;
     box-sizing: border-box;
 }
-.pacman{
-    background-color: yellow !important;
-    border-radius: 10px;
-    border: 2px solid black;
-    box-sizing: border-box;
-}
-.phantom{
-    box-sizing: border-box;
-    background-color: red;
-    border: 2px solid black;
-}
 .power-pellet{
     background-color: green;
     border: 2px solid black;
     box-sizing: border-box;
 }
+.pacman{
+    background-color: yellow;
+    border-radius: 10px;
+    border: 2px solid black;
+    box-sizing: border-box;
+}
 
+/* Ghost */
+.ghost{
+    box-sizing: border-box;
+    border: 2px solid black;
+}
+.red{
+    background-color: red;
+}
+.blue{
+    background-color: blue;
+}
+.orange{
+    background-color: orange;
+}
+.pink{
+    background-color: pink;
+}
+.ghostScared{
+    background-color: lightblue;
+}
