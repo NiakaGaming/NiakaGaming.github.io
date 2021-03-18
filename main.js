@@ -165,10 +165,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     else {
                         dirTemp = directionRIGHT;
                     }
-                    //     // IF c'est la sortie de droite
-                    //     if (spawnPos == 208) {
-                    //         spawnPos = 190
-                    //     }
                     //     // IF c'est un ghost
                     //     if (rows[spawnPos].classList.contains("ghost") && power == false) {
                     //         alert("YOU ARE DEAD");
@@ -201,6 +197,15 @@ document.addEventListener("DOMContentLoaded", () => {
     function movePlayer() {
         rows[spawnPos].classList.remove("pacman");
 
+        // Teleportations 
+        if (spawnPos == 190 && direction == directionLEFT) {
+            spawnPos = 209
+        }
+        else if (spawnPos == 208 && direction == directionRIGHT) {
+            spawnPos = 189
+        }
+
+        // Move 
         if (dirTemp[1] && !rows[spawnPos + dirTemp[0]].classList.contains("wall") && direction != dirTemp) {
             spawnPos += dirTemp[0];
             clearInterval(timerMove);
@@ -208,10 +213,6 @@ document.addEventListener("DOMContentLoaded", () => {
             direction = dirTemp;
         }
         else if (direction[1] && !rows[spawnPos + direction[0]].classList.contains("wall")) {
-            // IF c'est la sortie de gauche
-            if (spawnPos == 190) {
-                spawnPos = 208
-            }
             spawnPos += direction[0];
             clearInterval(timerMove);
             timerMove = setInterval(movePlayer, 250);
@@ -302,18 +303,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // AI behavior
     function moveAI() {
+        // if conatins(.red) || conatins(.red)conatins(.blue) || conatins(.orange) || conatins(.pink)
     }
     let timerMoveAI = setInterval(moveAI, 250);
 })
-
-// https://www.youtube.com/watch?v=CeUGlSl2i4Q
-
-// https://www.youtube.com/watch?v=wRcR4y7Z2MM
-
-// https://www.youtube.com/watch?v=9TcU2C1AACw
-
-
-// ----------------------------------------------------------------------------------------
-// https://github.com/weibenfalk/vanilla-js-pacman/tree/master/js-pacman-FINISHED
-// https://www.youtube.com/watch?v=YBtzzVwrTeE&ab_channel=TraversyMedia
-// ----------------------------------------------------------------------------------------
