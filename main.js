@@ -44,6 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "orange",
         "pink",
     ];
+    let k = 0;
 
     function createMap() {
         for (let i = 0; i < map.length; i++) {
@@ -55,18 +56,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 row.appendChild(square);
                 squares.push(square);
                 if (map[i][j] == 0) {
-                    squares[j].classList.add("wall")
+                    squares[j].classList.add("wall");
                 }
                 else if (map[i][j] == 1) {
-                    squares[j].classList.add("pac-dot")
+                    squares[j].classList.add("pac-dot");
                 }
                 else if (map[i][j] == 2) {
-                    squares[j].classList.add("ghost")
-                    squares[j].classList.add(ghost[0])
-                    ghost.splice(0, 1);
+                    squares[j].classList.add("ghost");
+                    squares[j].classList.add(ghost[k]);
+                    k++;
                 }
                 else if (map[i][j] == 3) {
-                    squares[j].classList.add("power-pellet")
+                    squares[j].classList.add("power-pellet");
                 }
             }
             squares.forEach(element => {
@@ -107,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let direction = directionLEFT;
 
     // MOVE UNTIL THERE'S A WALL
-    let timerMove = setInterval(movePlayer, 250);
+    let timerMove = setInterval(movePlayer, 200);
     let previousDir;
     let dirTemp = direction;
 
@@ -121,7 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (direction != previousDir) {
                             dirTemp = direction;
                             clearInterval(timerMove);
-                            timerMove = setInterval(movePlayer, 250);
+                            timerMove = setInterval(movePlayer, 200);
                         }
                     }
                     else {
@@ -140,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (direction != previousDir) {
                             dirTemp = direction;
                             clearInterval(timerMove);
-                            timerMove = setInterval(movePlayer, 250);
+                            timerMove = setInterval(movePlayer, 200);
                         }
                     }
                     else {
@@ -159,7 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (direction != previousDir) {
                             dirTemp = direction;
                             clearInterval(timerMove);
-                            timerMove = setInterval(movePlayer, 250);
+                            timerMove = setInterval(movePlayer, 200);
                         }
                     }
                     else {
@@ -178,7 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (direction != previousDir) {
                             dirTemp = direction;
                             clearInterval(timerMove);
-                            timerMove = setInterval(movePlayer, 250);
+                            timerMove = setInterval(movePlayer, 200);
                         }
                     }
                     else {
@@ -205,17 +206,19 @@ document.addEventListener("DOMContentLoaded", () => {
             spawnPos = 189
         }
 
-        // Move 
+        // MOVES
+        // If direction change then clearInterval && reset Interval with new direction && if no wall next
         if (dirTemp[1] && !rows[spawnPos + dirTemp[0]].classList.contains("wall") && direction != dirTemp) {
             spawnPos += dirTemp[0];
             clearInterval(timerMove);
-            timerMove = setInterval(movePlayer, 250);
+            timerMove = setInterval(movePlayer, 200);
             direction = dirTemp;
         }
+        // if no wall next
         else if (direction[1] && !rows[spawnPos + direction[0]].classList.contains("wall")) {
             spawnPos += direction[0];
             clearInterval(timerMove);
-            timerMove = setInterval(movePlayer, 250);
+            timerMove = setInterval(movePlayer, 200);
         }
 
         dotEaten();
@@ -289,10 +292,10 @@ document.addEventListener("DOMContentLoaded", () => {
         let i = 418;
         rows.forEach(element => {
             if (element.classList.contains("pac-dot") || element.classList.contains("power-pellet")) {
-                i++
+                i++;
             }
             else {
-                i--
+                i--;
             }
             if (i == 0) {
                 alert("WINS");
@@ -301,9 +304,44 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    let redPos = 161;
+    let AIdirectionDOWN = [+width, redPos + width < width * (width + 3)];
+    let AIdirectionLEFT = [-1, redPos % width !== 0];
+    let AIdirectionRIGHT = [+ 1, redPos % width < width - 1];
+    let AIdirectionUP = [-width, redPos - width >= 0];
+    let AIdirection = AIdirectionRIGHT;
     // AI behavior
     function moveAI() {
-        // if conatins(.red) || conatins(.red)conatins(.blue) || conatins(.orange) || conatins(.pink)
+        rows[redPos].classList.remove("ghost", "red");
+
+        // if (AIdirection[1] && !rows[redPos + AIdirection[0]].classList.contains("wall")) {
+        //     AIdirection[0];
+        // }
+        if (AIdirectionUP[1] && !rows[redPos + AIdirectionUP[0]].classList.contains("wall")) {
+            redPos += AIdirectionUP[0];
+        }
+        else if (AIdirectionLEFT[1] && !rows[redPos + AIdirectionLEFT[0]].classList.contains("wall")) {
+            redPos += AIdirectionLEFT[0];
+        }
+        else if (AIdirectionDOWN[1] && !rows[redPos + AIdirectionDOWN[0]].classList.contains("wall")) {
+            redPos += AIdirectionDOWN[0];
+        }
+        else if (AIdirectionRIGHT[1] && !rows[redPos + AIdirectionRIGHT[0]].classList.contains("wall")) {
+            redPos += AIdirectionRIGHT[0];
+        }
+
+        rows[redPos].classList.add("ghost", "red");
     }
     let timerMoveAI = setInterval(moveAI, 250);
 })
+
+
+// https://www.youtube.com/watch?v=ataGotQ7ir8&ab_channel=RetroGameMechanicsExplained
+// 4 States
+// SCATTER 
+// CHASE 
+// FRIGHTENED 
+// EATEN 
+
+// https://www.youtube.com/watch?v=qwhXIzNrb9w&ab_channel=CodeBullet
+// AI Algorithme
