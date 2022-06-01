@@ -38,6 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Create the map
     let rows = [];
     let squares = [];
+    let gridPos = [];
     let ghost = [
         "red",
         "blue",
@@ -47,6 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let k = 0;
 
     function createMap() {
+        let jTemp = 0;
         for (let i = 0; i < map.length; i++) {
             const row = document.createElement("div");
             grid.appendChild(row);
@@ -55,25 +57,29 @@ document.addEventListener("DOMContentLoaded", () => {
                 const square = document.createElement("div");
                 row.appendChild(square);
                 squares.push(square);
+                gridPos[i + j + jTemp] = [];
+                gridPos[i + j + jTemp].x = j;
+                gridPos[i + j + jTemp].y = i;
                 if (map[i][j] == 0) {
-                    squares[j].classList.add("wall");
+                    square.classList.add("wall");
                 }
                 else if (map[i][j] == 1) {
-                    squares[j].classList.add("pac-dot");
+                    square.classList.add("pac-dot");
                 }
                 else if (map[i][j] == 2) {
-                    squares[j].classList.add("ghost");
-                    squares[j].classList.add(ghost[k]);
+                    square.classList.add("ghost");
+                    square.classList.add(ghost[k]);
                     k++;
                 }
                 else if (map[i][j] == 3) {
-                    squares[j].classList.add("power-pellet");
+                    square.classList.add("power-pellet");
                 }
             }
             squares.forEach(element => {
                 rows.push(element);
             });
             squares.splice(0);
+            jTemp += 18;
         }
     }
     createMap();
