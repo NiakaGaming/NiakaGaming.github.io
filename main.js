@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
         [0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0],
         [0, 0, 0, 0, 1, 0, 0, 0, 4, 0, 4, 0, 0, 0, 1, 0, 0, 0, 0],
         [4, 4, 4, 0, 1, 0, 4, 4, 4, 2, 4, 4, 4, 0, 1, 0, 4, 4, 4],
-        [0, 0, 0, 0, 1, 0, 4, 0, 0, 4, 0, 0, 4, 0, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 0, 4, 0, 0, 5, 0, 0, 4, 0, 1, 0, 0, 0, 0],
         [4, 4, 4, 4, 1, 4, 4, 0, 2, 2, 2, 0, 4, 4, 1, 4, 4, 4, 4],
         [0, 0, 0, 0, 1, 0, 4, 0, 0, 0, 0, 0, 4, 0, 1, 0, 0, 0, 0],
         [4, 4, 4, 0, 1, 0, 4, 4, 4, 4, 4, 4, 4, 0, 1, 0, 4, 4, 4],
@@ -34,6 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 2 = GHOST
     // 3 = POWER-PELLET
     // 4 = EMPTY
+    // 5 = ghostSpawn
 
     // Create the map
     let rows = [];
@@ -73,6 +74,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 else if (map[i][j] == 3) {
                     square.classList.add("power-pellet");
+                }
+                else if (map[i][j] == 5) {
+                    square.classList.add("ghostSpawn");
                 }
             }
             squares.forEach(element => {
@@ -311,30 +315,396 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     let redPos = 161;
-    let AIdirectionDOWN = [+width, redPos + width < width * (width + 3)];
-    let AIdirectionLEFT = [-1, redPos % width !== 0];
-    let AIdirectionRIGHT = [+ 1, redPos % width < width - 1];
-    let AIdirectionUP = [-width, redPos - width >= 0];
-    let AIdirection = AIdirectionRIGHT;
+    let redDirectionDOWN = [+width, redPos + width < width * (width + 3), "down"];
+    let redDirectionLEFT = [-1, redPos % width !== 0, "left"];
+    let redDirectionRIGHT = [+ 1, redPos % width < width - 1, "right"];
+    let redDirectionUP = [-width, redPos - width >= 0, "up"];
+    let redDirection = redDirectionLEFT;
     // AI behavior
     function moveAI() {
         rows[redPos].classList.remove("ghost", "red");
 
-        // if (AIdirection[1] && !rows[redPos + AIdirection[0]].classList.contains("wall")) {
-        //     AIdirection[0];
+        let dist1, dist2, dist3
+        let wallDir = "";
+        let min;
+        switch (redDirection[2]) {
+            case "up":
+                console.log("up");
+                // up, left, right
+
+                // CHECK WALLS TO LEFT, UP & DOWN
+                // NO WALL UP
+                if (redDirection[1] && !rows[redPos + redDirectionUP[0]].classList.contains("wall")) {
+                    dist1 = Math.pow(Math.abs(gridPos[spawnPos].x - gridPos[redPos].x), 2) + Math.pow(Math.abs(gridPos[spawnPos].y - gridPos[redPos].y + 1), 2)
+                }
+                // NO WALL LEFT
+                if (redDirection[1] && !rows[redPos + redDirectionLEFT[0]].classList.contains("wall")) {
+                    dist2 = Math.pow(Math.abs(gridPos[spawnPos].x - gridPos[redPos].x - 1), 2) + Math.pow(Math.abs(gridPos[spawnPos].y - gridPos[redPos].y), 2)
+                }
+                // NO WALL RIGHT
+                if (redDirection[1] && !rows[redPos + redDirectionRIGHT[0]].classList.contains("wall")) {
+                    dist3 = Math.pow(Math.abs(gridPos[spawnPos].x - gridPos[redPos].x + 1), 2) + Math.pow(Math.abs(gridPos[spawnPos].y - gridPos[redPos].y), 2)
+                }
+
+                if (dist1 == undefined) {
+                    // console.log("dist1");
+                    wallDir += "1";
+                }
+                if (dist2 == undefined) {
+                    // console.log("dist2");
+                    wallDir += "2";
+                }
+                if (dist3 == undefined) {
+                    // console.log("dist3");
+                    wallDir += "3";
+                }
+
+                switch (wallDir) {
+                    case "":
+                        min = Math.min(dist1, dist2, dist3);
+                        break;
+                    case "1":
+                        min = Math.min(dist2, dist3);
+                        break;
+                    case "2":
+                        min = Math.min(dist1, dist3);
+                        break;
+                    case "3":
+                        min = Math.min(dist1, dist2);
+                        break;
+                    case "12":
+                        min = dist3
+                        break;
+                    case "13":
+                        min = dist2
+                        break;
+                    case "23":
+                        min = dist1;
+                        break;
+
+                    default:
+                        break;
+                }
+
+                // console.log(min);
+
+                if (dist1 == dist2) {
+                    // dist2 WINS (UP)
+                }
+                else if (dist1 == dist3) {
+                    // dist1 WINS (LEFT)
+                }
+                else if (dist2 == dist3) {
+                    // dist2 WINS (UP)
+                }
+
+                if (min == dist1) {
+                    redPos += redDirectionUP[0];
+                    redDirection = redDirectionUP;
+                }
+                else if (min == dist2) {
+                    redPos += redDirectionLEFT[0];
+                    redDirection = redDirectionLEFT;
+                }
+                else if (min == dist3) {
+                    redPos += redDirectionRIGHT[0];
+                    redDirection = redDirectionRIGHT;
+                }
+
+                break;
+
+            case "left":
+                // left, up, down
+                console.log("left");
+
+                // CHECK WALLS TO LEFT, UP & DOWN
+                // NO WALL LEFT
+                if (redDirection[1] && !rows[redPos + redDirectionLEFT[0]].classList.contains("wall")) {
+                    dist1 = Math.pow(Math.abs(gridPos[spawnPos].x - gridPos[redPos].x - 1), 2) + Math.pow(Math.abs(gridPos[spawnPos].y - gridPos[redPos].y), 2)
+                }
+                // NO WALL UP
+                if (redDirection[1] && !rows[redPos + redDirectionUP[0]].classList.contains("wall")) {
+                    dist2 = Math.pow(Math.abs(gridPos[spawnPos].x - gridPos[redPos].x), 2) + Math.pow(Math.abs(gridPos[spawnPos].y - gridPos[redPos].y + 1), 2)
+                }
+                // NO WALL DOWN
+                if (redDirection[1] && !rows[redPos + redDirectionDOWN[0]].classList.contains("wall") && !rows[redPos + redDirectionDOWN[0]].classList.contains("ghostSpawn")) {
+                    dist3 = Math.pow(Math.abs(gridPos[spawnPos].x - gridPos[redPos].x), 2) + Math.pow(Math.abs(gridPos[spawnPos].y - gridPos[redPos].y - 1), 2)
+                }
+
+                if (dist1 == undefined) {
+                    // console.log("dist1");
+                    wallDir += "1";
+                }
+                if (dist2 == undefined) {
+                    // console.log("dist2");
+                    wallDir += "2";
+                }
+                if (dist3 == undefined) {
+                    // console.log("dist3");
+                    wallDir += "3";
+                }
+
+                switch (wallDir) {
+                    case "":
+                        min = Math.min(dist1, dist2, dist3);
+                        break;
+                    case "1":
+                        min = Math.min(dist2, dist3);
+                        break;
+                    case "2":
+                        min = Math.min(dist1, dist3);
+                        break;
+                    case "3":
+                        min = Math.min(dist1, dist2);
+                        break;
+                    case "12":
+                        min = dist3
+                        break;
+                    case "13":
+                        min = dist2
+                        break;
+                    case "23":
+                        min = dist1;
+                        break;
+
+                    default:
+                        break;
+                }
+
+                // console.log(min);
+
+                if (dist1 == dist2) {
+                    // dist2 WINS (UP)
+                }
+                else if (dist1 == dist3) {
+                    // dist1 WINS (LEFT)
+                }
+                else if (dist2 == dist3) {
+                    // dist2 WINS (UP)
+                }
+
+                if (min == dist1) {
+                    redPos += redDirectionLEFT[0];
+                    redDirection = redDirectionLEFT;
+                }
+                else if (min == dist2) {
+                    redPos += redDirectionUP[0];
+                    redDirection = redDirectionUP;
+                }
+                else if (min == dist3) {
+                    redPos += redDirectionDOWN[0];
+                    redDirection = redDirectionDOWN;
+                }
+
+                break;
+
+            case "down":
+                console.log("down");
+                // down, left, right
+
+                // NO WALL DOWN
+                if (redDirection[1] && !rows[redPos + redDirectionDOWN[0]].classList.contains("wall") && !rows[redPos + redDirectionDOWN[0]].classList.contains("ghostSpawn")) {
+                    dist1 = Math.pow(Math.abs(gridPos[spawnPos].x - gridPos[redPos].x), 2) + Math.pow(Math.abs(gridPos[spawnPos].y - gridPos[redPos].y - 1), 2)
+                }
+                // NO WALL LEFT
+                if (redDirection[1] && !rows[redPos + redDirectionLEFT[0]].classList.contains("wall")) {
+                    dist2 = Math.pow(Math.abs(gridPos[spawnPos].x - gridPos[redPos].x - 1), 2) + Math.pow(Math.abs(gridPos[spawnPos].y - gridPos[redPos].y), 2)
+                }
+                // NO WALL RIGHT
+                if (redDirection[1] && !rows[redPos + redDirectionRIGHT[0]].classList.contains("wall")) {
+                    dist3 = Math.pow(Math.abs(gridPos[spawnPos].x - gridPos[redPos].x + 1), 2) + Math.pow(Math.abs(gridPos[spawnPos].y - gridPos[redPos].y), 2)
+                }
+
+                if (dist1 == undefined) {
+                    // console.log("dist1");
+                    wallDir += "1";
+                }
+                if (dist2 == undefined) {
+                    // console.log("dist2");
+                    wallDir += "2";
+                }
+                if (dist3 == undefined) {
+                    // console.log("dist3");
+                    wallDir += "3";
+                }
+
+                switch (wallDir) {
+                    case "":
+                        min = Math.min(dist1, dist2, dist3);
+                        break;
+                    case "1":
+                        min = Math.min(dist2, dist3);
+                        break;
+                    case "2":
+                        min = Math.min(dist1, dist3);
+                        break;
+                    case "3":
+                        min = Math.min(dist1, dist2);
+                        break;
+                    case "12":
+                        min = dist3
+                        break;
+                    case "13":
+                        min = dist2
+                        break;
+                    case "23":
+                        min = dist1;
+                        break;
+
+                    default:
+                        break;
+                }
+
+                // console.log(min);
+                // 2, 1, 3
+                if (dist1 == dist2) {
+                    alert("dist2 wins")
+                    // dist2 WINS (LEFT)
+                }
+                else if (dist1 == dist3) {
+                    alert("dist3 wins")
+                    // dist1 WINS (RIGHT)
+                }
+                else if (dist2 == dist3) {
+                    alert("dist2 wins")
+                    // dist2 WINS (LEFT)
+                }
+
+                if (min == dist1) {
+                    redPos += redDirectionDOWN[0];
+                    redDirection = redDirectionDOWN;
+                }
+                else if (min == dist2) {
+                    redPos += redDirectionLEFT[0];
+                    redDirection = redDirectionLEFT;
+                }
+                else if (min == dist3) {
+                    redPos += redDirectionRIGHT[0];
+                    redDirection = redDirectionRIGHT;
+                }
+                break;
+
+            case "right":
+                console.log("right");
+                // right, top, down
+
+                // CHECK WALLS TO RIGHT, UP & DOWN
+                // NO WALL RIGHT
+                if (redDirection[1] && !rows[redPos + redDirectionRIGHT[0]].classList.contains("wall")) {
+                    dist1 = Math.pow(Math.abs(gridPos[spawnPos].x - gridPos[redPos].x + 1), 2) + Math.pow(Math.abs(gridPos[spawnPos].y - gridPos[redPos].y), 2)
+                }
+                // NO WALL UP
+                if (redDirection[1] && !rows[redPos + redDirectionUP[0]].classList.contains("wall")) {
+                    dist2 = Math.pow(Math.abs(gridPos[spawnPos].x - gridPos[redPos].x), 2) + Math.pow(Math.abs(gridPos[spawnPos].y - gridPos[redPos].y + 1), 2)
+                }
+                // NO WALL DOWN
+                if (redDirection[1] && !rows[redPos + redDirectionDOWN[0]].classList.contains("wall") && !rows[redPos + redDirectionDOWN[0]].classList.contains("ghostSpawn")) {
+                    dist3 = Math.pow(Math.abs(gridPos[spawnPos].x - gridPos[redPos].x), 2) + Math.pow(Math.abs(gridPos[spawnPos].y - gridPos[redPos].y - 1), 2)
+                }
+
+                if (dist1 == undefined) {
+                    // console.log("dist1");
+                    wallDir += "1";
+                }
+                if (dist2 == undefined) {
+                    // console.log("dist2");
+                    wallDir += "2";
+                }
+                if (dist3 == undefined) {
+                    // console.log("dist3");
+                    wallDir += "3";
+                }
+
+                switch (wallDir) {
+                    case "":
+                        min = Math.min(dist1, dist2, dist3);
+                        break;
+                    case "1":
+                        min = Math.min(dist2, dist3);
+                        break;
+                    case "2":
+                        min = Math.min(dist1, dist3);
+                        break;
+                    case "3":
+                        min = Math.min(dist1, dist2);
+                        break;
+                    case "12":
+                        min = dist3
+                        break;
+                    case "13":
+                        min = dist2
+                        break;
+                    case "23":
+                        min = dist1;
+                        break;
+
+                    default:
+                        break;
+                }
+
+                // console.log(min);
+
+                if (dist1 == dist2) {
+                    // dist2 WINS (UP)
+                }
+                else if (dist1 == dist3) {
+                    // dist1 WINS (LEFT)
+                }
+                else if (dist2 == dist3) {
+                    // dist2 WINS (UP)
+                }
+
+                if (min == dist1) {
+                    redPos += redDirectionRIGHT[0];
+                    redDirection = redDirectionRIGHT;
+                }
+                else if (min == dist2) {
+                    redPos += redDirectionUP[0];
+                    redDirection = redDirectionUP;
+                }
+                else if (min == dist3) {
+                    redPos += redDirectionDOWN[0];
+                    redDirection = redDirectionDOWN;
+                }
+                break;
+
+            default:
+                break;
+        }
+
+        // dist² = x² + y² 
+
+        // IF DIST² is the same as another THEN 
+        // Up, Left, Down, Right
+
+        // if red direction == left
+        // left, top or down
+
+        // if nothing up
+        // else if nothing left
+        // else if nothing down
+        // else if nothing right
+
+        // console.log(Math.pow(Math.abs(gridPos[spawnPos].x - gridPos[redPos].x), 2) + Math.pow(Math.abs(gridPos[spawnPos].y - gridPos[redPos].y), 2))
+
+
+
+
+        // // if (AIdirection[1] && !rows[redPos + AIdirection[0]].classList.contains("wall")) {
+        // //     AIdirection[0];
+        // // }
+        // if (AIdirectionUP[1] && !rows[redPos + AIdirectionUP[0]].classList.contains("wall")) {
+        //     redPos += AIdirectionUP[0];
         // }
-        if (AIdirectionUP[1] && !rows[redPos + AIdirectionUP[0]].classList.contains("wall")) {
-            redPos += AIdirectionUP[0];
-        }
-        else if (AIdirectionLEFT[1] && !rows[redPos + AIdirectionLEFT[0]].classList.contains("wall")) {
-            redPos += AIdirectionLEFT[0];
-        }
-        else if (AIdirectionDOWN[1] && !rows[redPos + AIdirectionDOWN[0]].classList.contains("wall")) {
-            redPos += AIdirectionDOWN[0];
-        }
-        else if (AIdirectionRIGHT[1] && !rows[redPos + AIdirectionRIGHT[0]].classList.contains("wall")) {
-            redPos += AIdirectionRIGHT[0];
-        }
+        // else if (AIdirectionLEFT[1] && !rows[redPos + AIdirectionLEFT[0]].classList.contains("wall")) {
+        //     redPos += AIdirectionLEFT[0];
+        // }
+        // else if (AIdirectionDOWN[1] && !rows[redPos + AIdirectionDOWN[0]].classList.contains("wall")) {
+        //     redPos += AIdirectionDOWN[0];
+        // }
+        // else if (AIdirectionRIGHT[1] && !rows[redPos + AIdirectionRIGHT[0]].classList.contains("wall")) {
+        //     redPos += AIdirectionRIGHT[0];
+        // }
 
         rows[redPos].classList.add("ghost", "red");
     }
@@ -344,10 +714,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // https://www.youtube.com/watch?v=ataGotQ7ir8&ab_channel=RetroGameMechanicsExplained
 // 4 States
-// SCATTER 
-// CHASE 
-// FRIGHTENED 
-// EATEN 
+// SCATTER
+// CHASE
+// FRIGHTENED
+// EATEN
 
 // https://www.youtube.com/watch?v=qwhXIzNrb9w&ab_channel=CodeBullet
 // AI Algorithme
