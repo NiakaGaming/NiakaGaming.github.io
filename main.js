@@ -308,7 +308,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 i--;
             }
             if (i == 0) {
-                alert("WINS");
+                // alert("WINS");
+                console.log("WINS");
                 resetMap();
             }
         });
@@ -558,15 +559,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 // console.log(min);
                 // 2, 1, 3
                 if (dist1 == dist2) {
-                    // alert("dist2 wins")
+                    // -alert("dist2 wins")
                     // dist2 WINS (LEFT)
                 }
                 else if (dist1 == dist3) {
-                    // alert("dist3 wins")
+                    // -alert("dist3 wins")
                     // dist1 WINS (RIGHT)
                 }
                 else if (dist2 == dist3) {
-                    // alert("dist2 wins")
+                    // -alert("dist2 wins")
                     // dist2 WINS (LEFT)
                 }
 
